@@ -40,11 +40,13 @@ def main():
     avg_translation_vector = np.mean(all_translation_vectors, axis=0)
     avg_euler_angles = np.mean(all_euler_angles, axis=0)
 
-    print("Average Camera Matrix:\n", avg_camera_matrix)
-    print("Average Distortion Coefficients:\n", avg_dist_coeffs)
-    print("Average Rotation Matrix:\n", avg_rotation_matrix)
-    print("Average Translation Vector:\n", avg_translation_vector)
-    print("Average Euler Angles (in radians):\n", avg_euler_angles)
-
+    np.savez('average_intrinsic_extrinsic_values.npz',
+             avg_camera_matrix=avg_camera_matrix,
+             avg_dist_coeffs=avg_dist_coeffs,
+             avg_rotation_matrix=avg_rotation_matrix,
+             avg_translation_vector=avg_translation_vector,
+             avg_euler_angles=avg_euler_angles)
+    print("The average values are saved.")
+    
 if __name__ == "__main__":
     main()

@@ -2,9 +2,9 @@ import cv2
 import numpy as np
 
 # Load the calibration parameters obtained from the previous calibration step
-calibration_data = np.load('intrinsic_params_1.npz')
-camera_matrix = calibration_data['camera_matrix']
-dist_coeffs = calibration_data['dist_coeffs']
+calibration_data = np.load('average_intrinsic_extrinsic_values.npz')
+camera_matrix = calibration_data['avg_camera_matrix']
+dist_coeffs = calibration_data['avg_dist_coeffs']
 
 # Define ArUco dictionary and parameters
 aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_6X6_250)  # Change the dictionary type if needed
