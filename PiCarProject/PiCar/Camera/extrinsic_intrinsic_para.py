@@ -73,10 +73,10 @@ def calculate_extrinsic_params(image_path):
         print(f"Error: Unable to load the image at '{image_path}'")
 
 def main():
-    images_path = '/home/pi/Desktop/Thesis/PiCarProject/PiCar/Camera/Images/img_5.jpg'  # Adjust this path
+    images_path = '/home/pi/Desktop/Thesis/PiCarProject/PiCar/Camera/Images/img_5.jpg'  
     calculate_intrinsic_params(images_path)
 
-    image_path = '/home/pi/Desktop/Thesis/PiCarProject/PiCar/Camera/Images/img_5.jpg'  # Replace with your image path
+    image_path = '/home/pi/Desktop/Thesis/PiCarProject/PiCar/Camera/Images/img_5.jpg'  
     calculate_extrinsic_params(image_path)
 
 if __name__ == "__main__":

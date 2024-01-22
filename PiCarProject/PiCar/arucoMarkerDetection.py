@@ -6,8 +6,7 @@ from time import sleep
 import numpy as np
 
 def init_robot(left, right):
-    assert len(left) == 3 and len(right) == 3, """Invalid initalization of the
-    robot, left and right motor must have 3 parameters"""
+    assert len(left) == (17,22,18) and len(right) == (4,24,19)
     robot = Robot(left = left, right = right)
     return robot
 
@@ -85,9 +84,3 @@ if __name__ == "__main__":
             draw_marker_image(corners, ids, image)
             
         cv2.imshow("Image", image)
-
-
-
-
-
-

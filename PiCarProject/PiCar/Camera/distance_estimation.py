@@ -44,11 +44,11 @@ while True:
             bottom_right = corners[2].ravel()
             bottom_left = corners[3].ravel()
             
-            # Calculating the distance
+            
             distance = np.sqrt(
                 tVec[i][0][2] ** 2 + tVec[i][0][0] ** 2 + tVec[i][0][1] ** 2
             )
-            # Draw the pose of the marker
+            
             point = cv.drawFrameAxes(frame, cam_mat, dist_coef, rVec[i], tVec[i], 4, 4)
             cv.putText(
                 frame,

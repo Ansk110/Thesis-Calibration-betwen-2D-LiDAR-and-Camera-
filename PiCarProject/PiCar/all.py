@@ -12,7 +12,7 @@ from math import cos, sin, pi, floor
 import pygame
 from adafruit_rplidar import RPLidar
 
-def process_data(lidar_output, camera_output, robot):
+def process_data(lidar_output, camera_output):
     pass
 
 if __name__ == "__main__":

@@ -11,8 +11,8 @@ class Steering:
         self.distanceMin = 450
         self.manualAcc = 0.05
         self.autonomusAcc = 0.07
-        self.RightMotor = Motor(24,4,19) 
-        self.LeftMotor = Motor(22,17,18)
+        self.RightMotor = Motor(4,24,19) 
+        self.LeftMotor = Motor(17,22,18)
         self.commandValues = {'K_UP':0,
                           'K_DOWN':0,
                           'K_LEFT':0,
@@ -26,7 +26,7 @@ class Steering:
         
     def driveAutonomus(self,scanData):
         self.checkScanData(scanData)
-        self.drive()
+        #self.drive()
         
     
     

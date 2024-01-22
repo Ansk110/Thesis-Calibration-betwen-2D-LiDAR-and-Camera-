@@ -16,7 +16,7 @@ def load_average_values(file_path):
     )
 
 if __name__ == "__main__":
-    file_path = 'average_intrinsic_extrinsic_values.npz'  # Change this path if needed
+    file_path = 'average_intrinsic_extrinsic_values.npz'  
     (
         avg_camera_matrix,
         avg_dist_coeffs,
