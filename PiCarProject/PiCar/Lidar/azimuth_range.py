@@ -1,7 +1,7 @@
 import numpy as np
 
 aruco_size = 10.0  
-lidar_to_aruco_distance = 626 
+lidar_to_aruco_distance = 834
 lidar_fov = 360.0  
 angular_size_rad = np.arctan2(aruco_size / 2, lidar_to_aruco_distance)
 angular_size_deg = np.degrees(angular_size_rad)

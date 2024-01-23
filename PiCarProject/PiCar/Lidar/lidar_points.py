@@ -4,8 +4,8 @@ from adafruit_rplidar import RPLidar
 import numpy as np
 
 
-azimuth_range_min = 170
-azimuth_range_max = 190
+azimuth_range_min = 178
+azimuth_range_max = 18
 
 class LidarScanner:
     def __init__(self, port_name='/dev/ttyUSB0'):
