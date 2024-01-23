@@ -1,13 +1,13 @@
 import numpy as np
 
 def load_intrinsic_params():
-    intrinsic_data = np.load('intrinsic_params_1.npz')
+    intrinsic_data = np.load('intrinsic_params.npz')
     camera_matrix = intrinsic_data['camera_matrix']
     dist_coeffs = intrinsic_data['dist_coeffs']
     return camera_matrix, dist_coeffs
 
 def load_extrinsic_params():
-    extrinsic_data = np.load('extrinsic_params_1.npz')
+    extrinsic_data = np.load('extrinsic_params.npz')
     rotation_matrices = extrinsic_data['rotation_matrices']
     translation_vectors = extrinsic_data['translation_vectors']
     euler_angles = extrinsic_data['euler_angles']

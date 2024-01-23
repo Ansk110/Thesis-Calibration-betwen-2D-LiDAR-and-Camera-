@@ -18,18 +18,20 @@ def calculate_intrinsic_params(images_path):
         corners, ids, _ = cv2.aruco.detectMarkers(gray, aruco_dict, parameters=parameters)
 
         if corners:
-            objp = np.array([[0, 0, 0], [0.04, 0, 0], [0.04, 0.04, 0], [0, 0.04, 0]], dtype=np.float32)
+            # Assuming the marker size is 75 mm
+            marker_size = 0.075
+            objp = np.array([[0, 0, 0], [marker_size, 0, 0], [marker_size, marker_size, 0], [0, marker_size, 0]], dtype=np.float32)
             obj_points.append(objp)
             img_points.append(corners[0])
 
     ret, camera_matrix, dist_coeffs, _, _ = cv2.calibrateCamera(obj_points, img_points, gray.shape[::-1], None, None)
-    np.savez('intrinsic_params_5.npz', camera_matrix=camera_matrix, dist_coeffs=dist_coeffs)
+    np.savez('intrinsic_params.npz', camera_matrix=camera_matrix, dist_coeffs=dist_coeffs)
 
 def calculate_extrinsic_params(image_path):
     aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_6X6_250)
-    marker_size = 0.073
+    marker_size = 0.075
 
-    calibration_data = np.load('intrinsic_params_5.npz')
+    calibration_data = np.load('intrinsic_params.npz')
     camera_matrix = calibration_data['camera_matrix']
     dist_coeffs = calibration_data['dist_coeffs']
 
@@ -64,7 +66,7 @@ def calculate_extrinsic_params(image_path):
                 translation_vectors.append(translation_vector)
                 euler_angles.append([roll, pitch, yaw])
 
-            np.savez('extrinsic_params_5.npz', rotation_matrices=rotation_matrices,
+            np.savez('extrinsic_params.npz', rotation_matrices=rotation_matrices,
                      translation_vectors=translation_vectors, euler_angles=euler_angles)
             print("Extrinsic parameters saved to extrinsic_params.npz")
         else:
@@ -73,10 +75,10 @@ def calculate_extrinsic_params(image_path):
         print(f"Error: Unable to load the image at '{image_path}'")
 
 def main():
-    images_path = '/home/pi/Desktop/Thesis/PiCarProject/PiCar/Camera/Images/img_5.jpg'  
+    images_path = '/home/pi/Desktop/Thesis/PiCarProject/PiCar/Camera/img.jpg'  
     calculate_intrinsic_params(images_path)
 
-    image_path = '/home/pi/Desktop/Thesis/PiCarProject/PiCar/Camera/Images/img_5.jpg'  
+    image_path = '/home/pi/Desktop/Thesis/PiCarProject/PiCar/Camera/img.jpg'  
     calculate_extrinsic_params(image_path)
 
 if __name__ == "__main__":

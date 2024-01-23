@@ -6,12 +6,8 @@ import cv2
 camera = PiCamera()
 camera.resolution = (864, 544)
 camera.framerate = 32
-<<<<<<< HEAD
-rawCapture = PiRGBArray(camera, size=(320, 240))
-# allow the camera to warm up
-=======
+
 rawCapture = PiRGBArray(camera, size=(864, 544))
->>>>>>> 3d96b8d (Added files)
 time.sleep(5)
 
 cv2.namedWindow("Frame")
