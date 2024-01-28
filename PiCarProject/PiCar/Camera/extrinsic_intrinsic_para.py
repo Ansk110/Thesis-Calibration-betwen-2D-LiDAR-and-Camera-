@@ -1,8 +1,9 @@
 import cv2
 import numpy as np
 import glob
+import os
 
-def calculate_intrinsic_params(images_path):
+def calculate_intrinsic_params(images_path, save_path):
     aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_6X6_250)
     parameters = cv2.aruco.DetectorParameters_create()
 
@@ -11,7 +12,7 @@ def calculate_intrinsic_params(images_path):
 
     calibration_images = glob.glob(images_path)
 
-    for fname in calibration_images:
+    for idx, fname in enumerate(calibration_images, start=1):
         img = cv2.imread(fname)
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
@@ -24,62 +25,75 @@ def calculate_intrinsic_params(images_path):
             obj_points.append(objp)
             img_points.append(corners[0])
 
-    ret, camera_matrix, dist_coeffs, _, _ = cv2.calibrateCamera(obj_points, img_points, gray.shape[::-1], None, None)
-    np.savez('intrinsic_params.npz', camera_matrix=camera_matrix, dist_coeffs=dist_coeffs)
+            ret, camera_matrix, dist_coeffs, _, _ = cv2.calibrateCamera(obj_points, img_points, gray.shape[::-1], None, None)
+            np.savez(os.path.join(save_path, f'intrinsic_params_{idx}.npz'), camera_matrix=camera_matrix, dist_coeffs=dist_coeffs)
+            print(f"Intrinsic parameters saved to intrinsic_params_{idx}.npz")
 
-def calculate_extrinsic_params(image_path):
+def calculate_extrinsic_params(images_path, save_path):
     aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_6X6_250)
     marker_size = 0.075
 
-    calibration_data = np.load('intrinsic_params.npz')
-    camera_matrix = calibration_data['camera_matrix']
-    dist_coeffs = calibration_data['dist_coeffs']
+    intrinsic_params_list = []
 
-    object_points = np.zeros((0, 3), dtype=np.float32)
-    for i in range(-6, 7):
-        for j in range(-6, 7):
-            object_point = np.array([i * marker_size, j * marker_size, 0.0], dtype=np.float32)
-            object_points = np.vstack((object_points, object_point))
+    calibration_images = glob.glob(images_path)
 
-    image = cv2.imread(image_path)
-    if image is not None:
-        gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        corners, marker_ids, _ = cv2.aruco.detectMarkers(gray_image, aruco_dict)
+    for idx, fname in enumerate(calibration_images, start=1):
+        intrinsic_params = np.load(os.path.join(save_path, '../Intrinsic', f'intrinsic_params_{idx}.npz'))
+        intrinsic_params_list.append(intrinsic_params)
 
-        if corners:
-            image_points = np.array(corners).squeeze()
-            rotation_matrices = []
-            translation_vectors = []
-            euler_angles = []
+    for idx, (fname, intrinsic_params) in enumerate(zip(calibration_images, intrinsic_params_list), start=1):
+        camera_matrix = intrinsic_params['camera_matrix']
+        dist_coeffs = intrinsic_params['dist_coeffs']
 
-            for i in range(len(corners)):
-                ret, rotation_vector, translation_vector = cv2.aruco.estimatePoseSingleMarkers(corners[i], marker_size,
-                                                                                                camera_matrix, dist_coeffs)
+        object_points = np.zeros((0, 3), dtype=np.float32)
 
-                rotation_matrix, _ = cv2.Rodrigues(rotation_vector)
+        for i in range(-6, 7):
+            for j in range(-6, 7):
+                object_point = np.array([i * marker_size, j * marker_size, 0.0], dtype=np.float32)
+                object_points = np.vstack((object_points, object_point))
 
-                roll = np.arctan2(rotation_matrix[2, 1], rotation_matrix[2, 2])
-                pitch = np.arctan2(-rotation_matrix[2, 0], np.sqrt(rotation_matrix[2, 1] ** 2 + rotation_matrix[2, 2] ** 2))
-                yaw = np.arctan2(rotation_matrix[1, 0], rotation_matrix[0, 0])
+        image = cv2.imread(fname)
 
-                rotation_matrices.append(rotation_matrix)
-                translation_vectors.append(translation_vector)
-                euler_angles.append([roll, pitch, yaw])
+        if image is not None:
+            gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            corners, marker_ids, _ = cv2.aruco.detectMarkers(gray_image, aruco_dict)
 
-            np.savez('extrinsic_params.npz', rotation_matrices=rotation_matrices,
-                     translation_vectors=translation_vectors, euler_angles=euler_angles)
-            print("Extrinsic parameters saved to extrinsic_params.npz")
+            if corners:
+                image_points = np.array(corners).squeeze()
+                rotation_matrices = []
+                translation_vectors = []
+                euler_angles = []
+
+                for i in range(len(corners)):
+                    ret, rotation_vector, translation_vector = cv2.aruco.estimatePoseSingleMarkers(corners[i], marker_size,
+                                                                                                    camera_matrix, dist_coeffs)
+
+                    rotation_matrix, _ = cv2.Rodrigues(rotation_vector)
+
+                    roll = np.arctan2(rotation_matrix[2, 1], rotation_matrix[2, 2])
+                    pitch = np.arctan2(-rotation_matrix[2, 0], np.sqrt(rotation_matrix[2, 1] ** 2 + rotation_matrix[2, 2] ** 2))
+                    yaw = np.arctan2(rotation_matrix[1, 0], rotation_matrix[0, 0])
+
+                    rotation_matrices.append(rotation_matrix)
+                    translation_vectors.append(translation_vector)
+                    euler_angles.append([roll, pitch, yaw])
+
+                np.savez(os.path.join(save_path, f'extrinsic_params_{idx}.npz'), rotation_matrices=rotation_matrices,
+                         translation_vectors=translation_vectors, euler_angles=euler_angles)
+                print(f"Extrinsic parameters saved to extrinsic_params_{idx}.npz")
+            else:
+                print(f"No markers detected in the image {fname}")
         else:
-            print("No markers detected in the image.")
-    else:
-        print(f"Error: Unable to load the image at '{image_path}'")
+            print(f"Error: Unable to load the image at '{fname}'")
+
 
 def main():
-    images_path = '/home/pi/Desktop/Thesis/PiCarProject/PiCar/Camera/img.jpg'  
-    calculate_intrinsic_params(images_path)
+    images_path = '/home/pi/Desktop/Thesis/PiCarProject/PiCar/Camera/Images/img_*.jpg'  # Use wildcard to match all images
+    intrinsic_save_path = '/home/pi/Desktop/Thesis/PiCarProject/PiCar/Camera/Intrinsic'
+    extrinsic_save_path = '/home/pi/Desktop/Thesis/PiCarProject/PiCar/Camera/Extrinsic'
 
-    image_path = '/home/pi/Desktop/Thesis/PiCarProject/PiCar/Camera/img.jpg'  
-    calculate_extrinsic_params(image_path)
+    calculate_intrinsic_params(images_path, intrinsic_save_path)
+    calculate_extrinsic_params(images_path, extrinsic_save_path)
 
 if __name__ == "__main__":
     main()
