@@ -30,7 +30,7 @@ def process_data(data):
         x = distance * cos(radians)
         y = distance * sin(radians)
         lidar_data.append([angle, x, y])
-    return np.array(lidar_data)
+    return lidar_data
 
 scan_data = [0] * 360
 
@@ -40,12 +40,14 @@ try:
         for (_, angle, distance) in scan:
             scan_data[min([359, floor(angle)])] = distance
         lidar_data.append(process_data(scan_data))
+        np.savetxt("lidar_data.csv",np.asarray(process_data(scan_data)), delimiter=",")
+        print(np.asarray(process_data(scan_data)).shape)
+        break;
         # Save LiDAR data to .npz file after one rotation
          # Stop after one rotation
 except KeyboardInterrupt:
     print('Stopping.')
-np.savez('/home/pi/Desktop/Thesis/PiCarProject/PiCar/Lidar/lidar_data.npz', lidar_data=lidar_data)
-print("LiDAR data saved.") 
+    
 lidar.stop()
 lidar.disconnect()
 print("LiDAR Disconnected.")

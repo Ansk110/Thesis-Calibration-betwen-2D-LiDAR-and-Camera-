@@ -25,8 +25,8 @@ def load_extrinsic_params(file_path):
         return None, None, None
 
 def main():
-    intrinsic_file_path = '/home/pi/Desktop/Thesis/PiCarProject/PiCar/Camera/Intrinsic/intrinsic_params_2.npz'
-    extrinsic_file_path = '/home/pi/Desktop/Thesis/PiCarProject/PiCar/Camera/Extrinsic/extrinsic_params_2.npz'
+    intrinsic_file_path = '/home/pi/Desktop/Thesis/PiCarProject/PiCar/Camera/Intrinsic/intrinsic_params_1.npz'
+    extrinsic_file_path = '/home/pi/Desktop/Thesis/PiCarProject/PiCar/Camera/Extrinsic/extrinsic_params_1.npz'
 
     camera_matrix, dist_coeffs = load_intrinsic_params(intrinsic_file_path)
     rotation_matrices, translation_vectors, euler_angles = load_extrinsic_params(extrinsic_file_path)
