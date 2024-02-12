@@ -1,9 +1,9 @@
 import cv2
 import numpy as np
 
-calibration_data = np.load('average_intrinsic_extrinsic_values.npz')
-camera_matrix = calibration_data['avg_camera_matrix']
-dist_coeffs = calibration_data['avg_dist_coeffs']
+calibration_data = np.load('/home/pi/Desktop/Thesis/PiCarProject/PiCar/Camera/Intrinsic/intrinsic_params_1.npz')
+camera_matrix = calibration_data['camera_matrix']
+dist_coeffs = calibration_data['dist_coeffs']
 
 aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_6X6_250)  
 parameters = cv2.aruco.DetectorParameters_create()

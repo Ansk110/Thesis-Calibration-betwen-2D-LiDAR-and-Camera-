@@ -19,10 +19,13 @@ def calculate_intrinsic_params(images_path, save_path):
         corners, ids, _ = cv2.aruco.detectMarkers(gray, aruco_dict, parameters=parameters)
 
         if corners:
-            # Assuming the marker size is 75 mm
-            marker_size = 0.075
+            # Assuming the marker size is 12.5 mm
+            marker_size = 12.5
             objp = np.array([[0, 0, 0], [marker_size, 0, 0], [marker_size, marker_size, 0], [0, marker_size, 0]], dtype=np.float32)
             obj_points.append(objp)
+            #corners_subpix = cv2.cornerSubPix(gray, corners[0], winSize=(11, 11), zeroZone=(-1, -1), 
+                                               #criteria=(cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001))
+            #img_points.append(corners_subpix)
             img_points.append(corners[0])
 
     ret, camera_matrix, dist_coeffs, _, _ = cv2.calibrateCamera(obj_points, img_points, gray.shape[::-1], None, None)
@@ -33,7 +36,7 @@ def calculate_intrinsic_params(images_path, save_path):
 
 def calculate_extrinsic_params(images_path, intrinsic_save_path, extrinsic_save_path):
     aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_6X6_250)
-    marker_size = 0.075
+    marker_size = 12.5
 
     intrinsic_params_list = []
 
@@ -89,7 +92,7 @@ def calculate_extrinsic_params(images_path, intrinsic_save_path, extrinsic_save_
             print(f"Error: Unable to load the image at '{fname}'")
 
 def main():
-    images_path = '/home/pi/Desktop/Thesis/PiCarProject/PiCar/Camera/Images/img_*.jpg'  # Use wildcard to match all images
+    images_path = '/home/pi/Desktop/Thesis/PiCarProject/PiCar/Camera/Images/img_*.jpg' 
     intrinsic_save_path = '/home/pi/Desktop/Thesis/PiCarProject/PiCar/Camera/Intrinsic'
     extrinsic_save_path = '/home/pi/Desktop/Thesis/PiCarProject/PiCar/Camera/Extrinsic'
 

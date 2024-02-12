@@ -3,16 +3,17 @@ from cv2 import aruco
 import numpy as np
 
 calib_data_path = "/home/pi/Desktop/Thesis/PiCarProject/PiCar/Camera/average_intrinsic_extrinsic_values.npz"
-
+intr_data_path = "/home/pi/Desktop/Thesis/PiCarProject/PiCar/Camera/Intrinsic/intrinsic_params_1.npz"
 calib_data = np.load(calib_data_path)
+intr_data = np.load(intr_data_path)
 print(calib_data.files)
 
-cam_mat = calib_data["avg_camera_matrix"]
-dist_coef = calib_data["avg_dist_coeffs"]
+cam_mat = intr_data["camera_matrix"]
+dist_coef = intr_data["dist_coeffs"]
 r_vectors = calib_data["avg_rotation_matrix"]
 t_vectors = calib_data["avg_translation_vector"]
 
-MARKER_SIZE = 7.3  # centimeters
+MARKER_SIZE = 12.5  # milliimeters
 
 marker_dict = aruco.Dictionary_get(aruco.DICT_6X6_250)
 
@@ -70,7 +71,7 @@ while True:
                 2,
                 cv.LINE_AA,
             )
-            # print(ids, "  ", corners)
+            #print(ids, "  ", corners)
     cv.imshow("frame", frame)
     key = cv.waitKey(1)
     if key == ord("q"):
