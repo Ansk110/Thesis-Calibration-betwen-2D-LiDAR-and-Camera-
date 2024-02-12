@@ -17,10 +17,8 @@ lidar_data = []
 PORT_NAME = '/dev/ttyUSB0'
 lidar = RPLidar(None, PORT_NAME)
 
-# used to scale data to fit on the screen
 max_distance = 0
 
-# pylint: disable=redefined-outer-name,global-statement
 def process_data(data):
     global max_distance
     lidar_data = []
