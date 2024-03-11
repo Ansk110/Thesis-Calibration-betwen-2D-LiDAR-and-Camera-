@@ -16,7 +16,7 @@ class LidarScanner:
     def initialize_display(self):
         os.putenv('SDL_FBDEV', '/dev/fb1')
         pygame.init()
-        self.lcd = pygame.display.set_mode((320, 240))
+        self.lcd = pygame.display.set_mode((500, 500))
         pygame.mouse.set_visible(False)
         self.lcd.fill((0, 0, 0))
         pygame.display.update()
@@ -30,7 +30,7 @@ class LidarScanner:
                 radians = angle * pi / 180.0
                 x = distance * cos(radians)
                 y = distance * sin(radians)
-                point = (160 + int(x / self.max_distance * 119), 120 + int(y / self.max_distance * 119))
+                point = (160 + int(x / self.max_distance * 500), 120 + int(y / self.max_distance * 500))
                 self.lcd.set_at(point, pygame.Color(255, 255, 255))
         pygame.display.update()
 
@@ -44,7 +44,7 @@ class LidarScanner:
             while True:
                 for scan in self.lidar.iter_scans():
                     for (_, angle, distance) in scan:
-                        self.scan_data[min([359, floor(angle)])] = distance
+                        self.scan_data[round(angle)] = distance
                     self.process_data(self.scan_data)
 
                     front_distance = self.distance_at_angle(angle=180)

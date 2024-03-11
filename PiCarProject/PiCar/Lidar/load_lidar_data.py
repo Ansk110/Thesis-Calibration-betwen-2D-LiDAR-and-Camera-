@@ -1,9 +1,13 @@
 import numpy as np
 
-file_path = '/home/pi/Desktop/Thesis/PiCarProject/PiCar/Lidar/lidar_data.npz'
+# File path
+lidar_filename = "lidar_data.npy"
 
-loaded_data = np.load(file_path)
-lidar_data = loaded_data['lidar_data']
-
-print("Loaded LiDAR Data:")
-print(lidar_data)
+# Load LiDAR data
+lidar_data = np.load(lidar_filename, allow_pickle=True)
+if lidar_data is None:
+    print("Error: Unable to load LiDAR data.")
+else:
+    print("LiDAR data loaded successfully.")
+    print("LiDAR data:")
+    print(lidar_data)

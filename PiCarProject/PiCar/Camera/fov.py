@@ -1,17 +1,17 @@
-import numpy as np
+import cv2
 
-def calculate_fov_relative(camera_matrix, marker_size):
-    focal_length = (camera_matrix[0, 0] + camera_matrix[1, 1]) / 2.0
-    fov_relative = 2 * np.arctan(marker_size / (2 * focal_length))
-    fov_degrees = np.degrees(fov_relative)
-    return fov_degrees
+def calculate_image_size(image_path):
+    # Load the image
+    image = cv2.imread(image_path)
+    if image is None:
+        raise FileNotFoundError(f"Image not found at {image_path}")
 
-def main():
-    intrinsic_data = np.load('intrinsic_params.npz')
-    camera_matrix = intrinsic_data['camera_matrix']
-    marker_size = 75.0 
-    fov_relative = calculate_fov_relative(camera_matrix, marker_size)
-    print("Estimated FOV (relative to marker size):", fov_relative, "degrees")
+    # Get the dimensions of the image
+    height, width, _ = image.shape
 
-if __name__ == "__main__":
-    main()
+    return width, height
+
+# Example usage:
+image_path = "/home/pi/Desktop/Thesis/PiCarProject/PiCar/Camera/Images/img_20.jpg"
+image_width, image_height = calculate_image_size(image_path)
+print(f"Image size: {image_width} x {image_height}")

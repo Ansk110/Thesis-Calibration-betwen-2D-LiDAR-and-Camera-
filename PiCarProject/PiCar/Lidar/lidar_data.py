@@ -1,51 +1,39 @@
-import os
-from math import cos, sin, pi, floor
-import pygame
 import numpy as np
 from adafruit_rplidar import RPLidar
 
-# Set up pygame and the display
-os.putenv('SDL_FBDEV', '/dev/fb1')
-pygame.init()
-lcd = pygame.display.set_mode((320, 240))
-pygame.mouse.set_visible(False)
-lcd.fill((0, 0, 0))
-pygame.display.update()
-lidar_data = []
+# Define the region of interest where the ArUco marker lies (in degrees)
+ARUCO_REGION_START = 158
+ARUCO_REGION_END = 201
 
-# Setup the RPLidar
-PORT_NAME = '/dev/ttyUSB0'
-lidar = RPLidar(None, PORT_NAME)
-
-max_distance = 0
-
-def process_data(data):
-    global max_distance
+def collect_lidar_data():
     lidar_data = []
-    for angle in range(360):
-        distance = data[angle]
-        radians = angle * pi / 180.0
-        x = distance * cos(radians)
-        y = distance * sin(radians)
-        lidar_data.append([angle, x, y])
-    return lidar_data
-
-scan_data = [0] * 360
-
-try:
-    print(lidar.info)
-    for scan in lidar.iter_scans():
-        for (_, angle, distance) in scan:
-            scan_data[min([359, floor(angle)])] = distance
-        lidar_data.append(process_data(scan_data))
-        np.savetxt("lidar_data.csv",np.asarray(process_data(scan_data)), delimiter=",")
-        print(np.asarray(process_data(scan_data)).shape)
-        break;
-        # Save LiDAR data to .npz file after one rotation
-         # Stop after one rotation
-except KeyboardInterrupt:
-    print('Stopping.')
+    # Establish connection to the RPLIDAR
+    lidar = RPLidar(None, '/dev/ttyUSB0')  # Update the port based on your device configuration
     
-lidar.stop()
-lidar.disconnect()
-print("LiDAR Disconnected.")
+    # Start scanning
+    lidar.start_motor()
+    lidar.connect()
+    
+    # Iterate through each scan
+    for scan in lidar.iter_scans():
+        # Filter out points outside the region of interest
+        scan_data = [(np.radians(measurement[1]), measurement[2]) for measurement in scan 
+                     if ARUCO_REGION_START <= measurement[1] <= ARUCO_REGION_END]
+        lidar_data.extend(scan_data)
+        
+        # Break if enough data is collected
+        if len(lidar_data) >= 1000:
+            break
+    
+    # Stop scanning and close connection
+    lidar.stop()
+    lidar.stop_motor()
+    lidar.disconnect()
+    
+    return np.array(lidar_data)
+
+# Example usage
+if __name__ == "__main__":
+    lidar_data = collect_lidar_data()
+    print("Collected Lidar Data:")
+    print(lidar_data)
