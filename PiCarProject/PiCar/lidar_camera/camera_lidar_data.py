@@ -1,6 +1,7 @@
 import cv2
 import os
 import numpy as np
+from pathlib import Path
 from tqdm.auto import tqdm
 import matplotlib.pyplot as plt
 from adafruit_rplidar import RPLidar
@@ -64,13 +65,11 @@ def main():
     image_gen = get_continuous_images(camera)
     lidar_gen = get_lidar_data(lidar, interval=10)
     
-    lidar_index = 1
-    camera_index = 1
+    data_index = 1
     collect_data = False
-    capture_images = False 
     
-    lidar_file_path = "/home/pi/Desktop/Thesis/PiCarProject/PiCar/lidar_camera"
-    image_file_path = "/home/pi/Desktop/Thesis/PiCarProject/PiCar/lidar_camera"
+    path2data = Path("data")
+    path2data.mkdir(parents=True, exist_ok=True)
     
     for image, lidar_data in zip(image_gen, lidar_gen):
         filtered_data = filter_lidar_data(lidar_data)
@@ -86,26 +85,20 @@ def main():
             break
         
         elif key == ord('l') or key == ord('L'):
-            collect_data = True
-            
-        elif key == ord('i'):
-            capture_images = True            
+            collect_data = True       
 
         if collect_data:
             data2save = lidar_data
-            file_path = os.path.join(lidar_file_path, f"data_{lidar_index}.npy")
-            np.save(file_path, data2save)
-            print(f"Lidar data saved")
-            lidar_index += 1
-            collect_data = False            
-          
-        if capture_images:
-            file_name = f'data_{camera_index}.jpg'
-            full_file_path = os.path.join(image_file_path, file_name)
-            cv2.imwrite(full_file_path, image)  
-            print("Image captured and saved at:", full_file_path)
-            camera_index += 1
-            capture_images = False          
+            lidar_data_path = path2data / f"data_{data_index}.npy"
+            np.save(str(lidar_data_path), data2save)
+            print(f"Lidar data saved at:", lidar_data_path)
+            
+            
+            img_data_path = path2data / f'data_{data_index}.jpg'
+            cv2.imwrite(str(img_data_path), image)  
+            print("Image captured and saved at:", img_data_path)
+            data_index += 1
+            collect_data = False   
                     
     lidar.stop()
     camera.close()

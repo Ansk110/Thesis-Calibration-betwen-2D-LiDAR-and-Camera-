@@ -23,8 +23,8 @@ def get_lidar_data(lidar, interval=1):
             iter_num = 0
 
 def process_lidar_data(all_data):
-    scale = 1.0
-    offset = -50
+    scale = 1.4
+    offset = -190
     x = ((all_data[:, 1] - 156) * 864) / (205 - 156)
     x = scale * x + offset
     y = [250] * len(x)
