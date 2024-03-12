@@ -63,7 +63,7 @@ def main():
     lidar = RPLidar(None, port)    
     cv2.namedWindow("Frame")
     image_gen = get_continuous_images(camera)
-    lidar_gen = get_lidar_data(lidar, interval=10)
+    lidar_gen = get_lidar_data(lidar, interval=100)
     
     data_index = 1
     collect_data = False
