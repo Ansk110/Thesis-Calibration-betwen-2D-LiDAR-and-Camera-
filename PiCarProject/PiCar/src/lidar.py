@@ -29,7 +29,7 @@ def process_lidar_data(raw_points, extrinsic_mat, cam_matrix, dist_coeffs, scale
     lidar_cam_points = lidar_to_camera_coord(lidar_points, extrinsic_mat=extrinsic_mat)
     lidar_pixels = camera_coord_to_pixel(lidar_cam_points, cam_matrix=cam_matrix, dist_coeffs=dist_coeffs)
     lidar_pixels = scale_and_translate_points(lidar_pixels, scale_mat, trans_vec)
-    lidar_pixels = np.round(lidar_pixels)
+    lidar_pixels = np.round(lidar_pixels).astype(int)
     return lidar_pixels
 
 
