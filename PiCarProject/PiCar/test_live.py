@@ -68,7 +68,7 @@ def main(
     cam_dist_coeffs = params["camera_intrinsic"]["dist_coeffs"]
     lidar_ext_matrix = params["lidar_extrinsic"]["extrinsic_matrix"]
     lidar_scale_matrix = params["lidar_extrinsic"]["scale_matrix"]
-    lidar_trans_vector = params["lidar_extrinsic"]["trans_vector"]
+    lidar_trans_vector = params["lidar_extrinsic"]["translation_vector"]
 
     cv2.namedWindow("Frame")
     lidar_gen = get_lidar_data(lidar)
