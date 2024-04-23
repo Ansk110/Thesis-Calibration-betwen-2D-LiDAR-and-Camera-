@@ -10,8 +10,8 @@ def load_lidar_data(path):
 
 
 def filter_lidar_data(data, max_range=100000, min_angle=158, max_angle=205):
-    filtered_data = [point for point in data if point[2] <= max_range and min_angle < point[1] < max_angle]
-    return np.array(filtered_data)
+    mask = (data[:, 2] <= max_range) & (min_angle <= data[:, 1]) & (data[:, 1] <= max_angle)
+    return data[mask]
 
 
 def lidar_to_camera_coord(points, extrinsic_mat):
