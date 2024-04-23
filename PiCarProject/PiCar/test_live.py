@@ -55,44 +55,49 @@ def get_lidar_data(lidar):
 
 def main(
     lidar_port='/dev/ttyUSB0',
-    lidar_max_range=100000,
+    lidar_max_range=10000,
     lidar_min_angle=158,
     lidar_max_angle=205,
 ):
     camera = init_camera()
     lidar = RPLidar(None, lidar_port)
-
-    # Load and read parameters
-    params = load_parameters()
-    cam_matrix = params["camera_intrinsic"]["camera_matrix"]
-    cam_dist_coeffs = params["camera_intrinsic"]["dist_coeffs"]
-    lidar_ext_matrix = params["lidar_extrinsic"]["extrinsic_matrix"]
-    lidar_scale_matrix = params["lidar_extrinsic"]["scale_matrix"]
-    lidar_trans_vector = params["lidar_extrinsic"]["translation_vector"]
-
-    cv2.namedWindow("Frame")
-    lidar_gen = get_lidar_data(lidar)
-    image_gen = get_continuous_images(camera)
-    for image, lidar_data in zip(image_gen, lidar_gen):
-        # Undistort image
-        undistorted_img = undistort_image(image, cam_matrix, cam_dist_coeffs)
-
-        # Filter and process lidar data
-        filtered_lidar_data = filter_lidar_data(lidar_data, lidar_max_range, lidar_min_angle, lidar_max_angle)
-        lidar_pixels = process_lidar_data(filtered_lidar_data, lidar_ext_matrix, cam_matrix, cam_dist_coeffs, lidar_scale_matrix, lidar_trans_vector)
-        norm_distances = filtered_lidar_data[:, 2]/lidar_max_range
-
-        # Add lidar points to the image
-        for point, dist in zip(lidar_pixels, norm_distances):
-            # Set color based on distance normalized to [0-1] range
-            color = (0, int((1 - dist) * 255), int(dist * 255))
-            undistorted_img = cv2.circle(undistorted_img, point, radius=5, color=color, thickness=-1)
-
-        cv2.imshow("Frame", undistorted_img)
     
-    lidar.stop()
-    camera.close()
-    cv2.destroyAllWindows()
+    try:
+        # Load and read parameters
+        params = load_parameters()
+        cam_matrix = params["camera_intrinsic"]["camera_matrix"]
+        cam_dist_coeffs = params["camera_intrinsic"]["dist_coeffs"]
+        lidar_ext_matrix = params["lidar_extrinsic"]["extrinsic_matrix"]
+        lidar_scale_matrix = params["lidar_extrinsic"]["scale_matrix"]
+        lidar_trans_vector = params["lidar_extrinsic"]["translation_vector"]
+
+        cv2.namedWindow("Frame")
+        lidar_gen = get_lidar_data(lidar)
+        image_gen = get_continuous_images(camera)
+        for image, lidar_data in zip(image_gen, lidar_gen):
+            # Undistort image
+            undistorted_img = undistort_image(image, cam_matrix, cam_dist_coeffs)
+
+            # Filter and process lidar data
+            filtered_lidar_data = filter_lidar_data(lidar_data, lidar_max_range, lidar_min_angle, lidar_max_angle)
+            if len(filtered_lidar_data) == 0:
+                continue
+            
+            lidar_pixels = process_lidar_data(filtered_lidar_data, lidar_ext_matrix, cam_matrix, cam_dist_coeffs, lidar_scale_matrix, lidar_trans_vector)
+            norm_distances = filtered_lidar_data[:, 2]/1000
+
+            # Add lidar points to the image
+            for point, dist in zip(lidar_pixels, norm_distances):
+                # Set color based on distance normalized to [0-1] range
+                color = (0, int((1 - dist) * 255), int(dist * 255))
+                undistorted_img = cv2.circle(undistorted_img, point, radius=5, color=color, thickness=-1)
+
+            cv2.imshow("Frame", undistorted_img)
+    
+    finally:
+        lidar.stop()
+        camera.close()
+        cv2.destroyAllWindows()
 
     
 if __name__ == "__main__":
