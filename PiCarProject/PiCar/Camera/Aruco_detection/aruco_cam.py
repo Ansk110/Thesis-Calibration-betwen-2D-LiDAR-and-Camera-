@@ -5,10 +5,10 @@ calibration_data = np.load('/home/pi/Desktop/Thesis/PiCarProject/PiCar/Camera/In
 camera_matrix = calibration_data['camera_matrix']
 dist_coeffs = calibration_data['dist_coeffs']
 
-aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_6X6_250)  
+aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_6X6_250)
 parameters = cv2.aruco.DetectorParameters_create()
 
-cap = cv2.VideoCapture(0)  
+cap = cv2.VideoCapture(0)
 
 while True:
     ret, frame = cap.read()
@@ -16,15 +16,15 @@ while True:
         break
 
     h, w = frame.shape[:2]
-    
+
     new_camera_matrix, _ = cv2.getOptimalNewCameraMatrix(camera_matrix, dist_coeffs, (w, h), 1, (w, h))
     undistorted_frame = cv2.undistort(frame, camera_matrix, dist_coeffs, None, new_camera_matrix)
-    
+
     corners, ids, _ = cv2.aruco.detectMarkers(undistorted_frame, aruco_dict, parameters=parameters)
 
-    if corners:        
+    if corners:
         undistorted_frame = cv2.aruco.drawDetectedMarkers(undistorted_frame, corners, ids)
-        
+
         for i in range(len(corners)):
             rvec, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(corners[i], 0.04, camera_matrix, dist_coeffs)
             undistorted_frame = cv2.aruco.drawAxis(undistorted_frame, camera_matrix, dist_coeffs, rvec, tvec, 0.02)

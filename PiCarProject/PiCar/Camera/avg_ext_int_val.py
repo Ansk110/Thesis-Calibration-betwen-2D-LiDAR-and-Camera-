@@ -1,11 +1,13 @@
 import numpy as np
 import os
 
+
 def load_intrinsic_params(data_path, file_number):
     intrinsic_data = np.load(os.path.join(data_path, f'Intrinsic/intrinsic_params_{file_number}.npz'))
     camera_matrix = intrinsic_data['camera_matrix']
     dist_coeffs = intrinsic_data['dist_coeffs']
     return camera_matrix, dist_coeffs
+
 
 def load_extrinsic_params(data_path, file_number):
     extrinsic_data = np.load(os.path.join(data_path, f'Extrinsic/extrinsic_params_{file_number}.npz'))
@@ -13,6 +15,7 @@ def load_extrinsic_params(data_path, file_number):
     translation_vectors = extrinsic_data['translation_vectors']
     euler_angles = extrinsic_data['euler_angles']
     return rotation_matrices, translation_vectors, euler_angles
+
 
 def main():
     num_images = 18
@@ -47,6 +50,7 @@ def main():
              avg_translation_vector=avg_translation_vector,
              avg_euler_angles=avg_euler_angles)
     print("The average values are saved.")
-    
+
+
 if __name__ == "__main__":
     main()
