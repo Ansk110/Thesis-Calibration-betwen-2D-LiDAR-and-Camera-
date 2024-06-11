@@ -5,7 +5,7 @@ This repository serves as the central hub for my thesis project focusing on impl
 
 ## Conda
 
-The command below will setup a conda environment with required packages and submodules.
+The command below will setup a conda environment with required packages.
 
 
 ```
