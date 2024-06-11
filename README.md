@@ -12,4 +12,5 @@ The command below will setup a conda environment with required packages and subm
 git clone git@github.com:AnupamKshetri/Thesis.git
 cd PiCarProject/PiCar
 conda env create -f environment.yml
+conda activate Lidar_cam
 ```
