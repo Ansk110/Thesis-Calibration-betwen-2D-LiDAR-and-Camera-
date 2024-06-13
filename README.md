@@ -24,12 +24,12 @@ python collect_data.py
 Once this script is run, by pressing the key "L" on the keyboard, it will capture the image from camera and point cloud data from LiDAR.
 
 
-#Finding parameters
+# Finding parameters
 A script is written in the Jupyter notebook to estimate the precise parameters' value. There are two files:
 1. find_param.ipynb: Used to find the precise value of parameters automatically using Bayesian estimation.
 2. calibrate_param.ipynb: Used to evaluate the accuracy of the parameters' values determined by plotting the LiDAR data onto the image plane. 
 
-#Testing live
+# Testing live
 The script `test_live.py` is used to check the calibration in real time.
 
 ```
